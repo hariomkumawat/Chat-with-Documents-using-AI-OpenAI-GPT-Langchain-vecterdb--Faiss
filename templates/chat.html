@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <style>
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #chat-container {
+            margin-bottom: 20px;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .message.user {
+            background-color: #f0f0f0;
+        }
+        .message.assistant {
+            background-color: #e1f3ff;
+        }
+        #chat-form {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        #chat-form input[type="text"] {
+            flex: 1;
+            margin-right: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #chat-form input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #chat-form input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="chat-container">
+            <!-- Messages will be displayed here -->
+            
+            {{ response }}
+        </div>
+
+        <form id="chat-form" action="/chat" method="post">
+            <input type="text" id="message" name="message" placeholder="Enter your message">
+            <input type="submit" value="Send">
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Function to send message to server and display response
+            function sendMessage(message) {
+                $.ajax({
+                    type: "POST",
+                    url: "/chat",
+                    data: {
+                        message: message
+                    },
+                    success: function(response) {
+                        $('#chat-container').append('<div class="message user"><strong>User:</strong> ' + message + '</div>');
+                        $('#chat-container').append('<div class="message assistant"><strong>Assistant:</strong> ' + response + '</div>');
+                    }
+                });
+            }
+
+            // Submit form via AJAX
+            $('#chat-form').submit(function(event) {
+                event.preventDefault();
+                var message = $('#message').val();
+                $('#message').val('');
+                if (message.trim() !== '') {
+                    sendMessage(message);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
